@@ -20,4 +20,7 @@ public class CategoriesModel {
     @Column(nullable = false)
     private String type;
 
-}
+    @Column()
+    private String imageURL;
+
+};

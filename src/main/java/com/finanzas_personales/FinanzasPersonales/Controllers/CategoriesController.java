@@ -38,6 +38,7 @@ public class CategoriesController {
 
     @DeleteMapping("/delete/{id}")
     public String deleteCategories(@PathVariable Long id){
+        categoriesService.deleteCategories(id);
         return "Categoría eliminada exitosamente :)";
     }
 
