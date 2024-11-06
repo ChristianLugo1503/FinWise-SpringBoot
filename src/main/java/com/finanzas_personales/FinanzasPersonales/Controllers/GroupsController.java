@@ -39,5 +39,4 @@ public class GroupsController {
         existingGroup.setCreatedBy(groupsModel.getCreatedBy());
         return  groupsService.saveGroup(existingGroup);
     }
-
 }

@@ -31,6 +31,4 @@ public class GroupsService {
     public void deleteGroup(Long id){
         groupsRepository.deleteById(id);
     }
-
-
 }
