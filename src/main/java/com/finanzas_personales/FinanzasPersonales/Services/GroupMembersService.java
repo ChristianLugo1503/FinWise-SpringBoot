@@ -1,7 +1,7 @@
 package com.finanzas_personales.FinanzasPersonales.Services;
 
 import com.finanzas_personales.FinanzasPersonales.Models.GroupMembersModel;
-import com.finanzas_personales.FinanzasPersonales.Repositories.IGroupMembersRpository;
+import com.finanzas_personales.FinanzasPersonales.Repositories.IGroupMembersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class GroupMembersService {
     @Autowired
-    private IGroupMembersRpository groupMembersRepository;
+    private IGroupMembersRepository groupMembersRepository;
 
     //GET LIST OF GROUP MEMBERS
     public List<GroupMembersModel> getAllGroupMembers(){
