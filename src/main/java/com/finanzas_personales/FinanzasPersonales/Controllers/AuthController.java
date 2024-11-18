@@ -13,6 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,8 +34,12 @@ public class AuthController {
 
     @Autowired
     private JwtUtilService jwtUtilService;
+
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> auth(@RequestBody AuthRequestDto authRequestDto) {
@@ -42,17 +47,19 @@ public class AuthController {
             // Verificar si el correo existe en la base de datos
             UserModel userModel = userRepository.findByEmail(authRequestDto.getEmail());
             if (userModel == null) {
-                // Si el correo no existe, retornamos un error específico
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                         "error", "Email not found",
                         "message", "The provided email does not exist in our records."
                 ));
             }
 
-            // Autenticar credenciales
-            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authRequestDto.getEmail(), authRequestDto.getPassword()
-            ));
+            // Verificar la contraseña
+            if (!passwordEncoder.matches(authRequestDto.getPassword(), userModel.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                        "error", "Incorrect password",
+                        "message", "The password you entered is incorrect."
+                ));
+            }
 
             // Generar JWT
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(authRequestDto.getEmail());
@@ -64,11 +71,6 @@ public class AuthController {
                     "refreshToken", refreshToken
             ));
 
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                    "error", "Incorrect password",
-                    "message", "The password you entered is incorrect."
-            ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
                     "error", "Unexpected error",
@@ -77,19 +79,24 @@ public class AuthController {
         }
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserModel userModel) {
         try {
             // Verificar si el correo existe en la base de datos
             UserModel userModelres = userRepository.findByEmail(userModel.getEmail());
             if (userModelres != null) {
-                // Si el correo no existe, retornamos un error específico
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                         "error", "Email exist",
-                        "message", "The provided email already exist."
+                        "message", "The provided email already exists."
                 ));
             }
 
+            // Encriptar la contraseña
+            String encodedPassword = passwordEncoder.encode(userModel.getPassword());
+            userModel.setPassword(encodedPassword);
+
+            // Guardar el usuario
             UserModel savedUser = userRepository.save(userModel);
 
             // Generar JWT
@@ -110,6 +117,7 @@ public class AuthController {
             ));
         }
     }
+
 
     @PostMapping("/refresh")
     public ResponseEntity<?> auth(@RequestBody Map<String, String> request) {

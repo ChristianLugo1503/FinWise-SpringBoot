@@ -31,7 +31,7 @@ public class UserModel {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String role;
+    @Column
+    private String role = "admin";
 }
 
