@@ -21,11 +21,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private IUserRepository iUserRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // Buscar en la base de datos el usuario
-        UserModel userModel = this.iUserRepository.findByEmail(username);
+        UserModel userModel = this.iUserRepository.findByEmail(email);
         if (userModel == null) {
-            throw new UsernameNotFoundException("Usuario no encontrado: " + username);
+            throw new UsernameNotFoundException("Usuario no encontrado: " + email);
         }
 
         // Crear la lista de autoridades (roles)
@@ -35,5 +35,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         // Devolver el User con username, password y autoridades
         return new User(userModel.getEmail(), userModel.getPassword(), authorities);
+    }
+
+    // Guardar usuario
+    public UserModel saveUser(UserModel userModel){
+        return iUserRepository.save(userModel);
     }
 }
