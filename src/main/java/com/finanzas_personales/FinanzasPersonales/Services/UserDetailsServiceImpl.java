@@ -41,4 +41,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserModel saveUser(UserModel userModel){
         return iUserRepository.save(userModel);
     }
+
+    //Optener usuario por email
+    public UserModel getUserByEmail(String email){
+        return iUserRepository.findByEmail(email);
+    }
+
 }
