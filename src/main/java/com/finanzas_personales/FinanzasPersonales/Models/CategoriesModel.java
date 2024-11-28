@@ -20,7 +20,20 @@ public class CategoriesModel {
     @Column(nullable = false)
     private String type;
 
-    @Column()
-    private String imageURL;
+    // Almacena el contenido de la imagen como BLOB
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
 
+    @ManyToOne // Muchos a uno
+    @JoinColumn(name = "user_id", nullable = false,columnDefinition = "INT(11)")
+    private UserModel userId;
+
+    // Constructor sin el campo ID
+    public CategoriesModel(String name, String type, byte[] image, UserModel user) {
+        this.name = name;
+        this.type = type;
+        this.image = image;
+        this.userId = user;
+    }
 };

@@ -1,6 +1,8 @@
 package com.finanzas_personales.FinanzasPersonales.Controllers;
 
+import com.finanzas_personales.FinanzasPersonales.Models.CategoriesModel;
 import com.finanzas_personales.FinanzasPersonales.Models.UserModel;
+import com.finanzas_personales.FinanzasPersonales.Repositories.ICategoriesRepository;
 import com.finanzas_personales.FinanzasPersonales.Repositories.IUserRepository;
 import com.finanzas_personales.FinanzasPersonales.Services.JwtUtilService;
 import com.finanzas_personales.FinanzasPersonales.dto.AuthRequestDto;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -40,6 +43,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ICategoriesRepository categoriesRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> auth(@RequestBody AuthRequestDto authRequestDto) {
@@ -99,6 +105,21 @@ public class AuthController {
             // Guardar el usuario
             UserModel savedUser = userRepository.save(userModel);
 
+            //Crear categorias por defecto para el nuevo usuario
+            /*
+            List<CategoriesModel> defaultCategories = List.of(
+                    new CategoriesModel("Ocio", "Gastos", "", savedUser),
+                    new CategoriesModel("Educación", "Gastos", "", savedUser),
+                    new CategoriesModel("Café", "Gastos", "", savedUser),
+                    new CategoriesModel("Otros", "Gastos", "", savedUser),
+                    new CategoriesModel("Salario", "Ingresos", "", savedUser),
+                    new CategoriesModel("Bonos", "Ingresos", "", savedUser),
+                    new CategoriesModel("Regalo", "Ingresos", "", savedUser),
+                    new CategoriesModel("Otros", "Ingresos", "", savedUser)
+            );
+
+            categoriesRepository.saveAll(defaultCategories);
+            */
             // Generar JWT
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(savedUser.getEmail());
             String jwt = this.jwtUtilService.generateToken(userDetails, savedUser.getRole());
