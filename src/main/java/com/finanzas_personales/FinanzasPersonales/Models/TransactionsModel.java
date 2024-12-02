@@ -23,7 +23,7 @@ public class TransactionsModel {
     private UserModel userId;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false) // Aquí `nullable = false` significa que es obligatorio.
+    @JoinColumn(name = "category_id", nullable = false)
     private CategoriesModel categoryID;
 
     @Column

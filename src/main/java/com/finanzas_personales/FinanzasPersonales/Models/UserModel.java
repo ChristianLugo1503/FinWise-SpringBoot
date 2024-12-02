@@ -17,7 +17,6 @@ public class UserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "INT(11)")
     private Long id;
 
     @Column(nullable = false)

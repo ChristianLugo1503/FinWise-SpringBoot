@@ -26,7 +26,7 @@ public class CategoriesModel {
     private byte[] image;
 
     @ManyToOne // Muchos a uno
-    @JoinColumn(name = "user_id", nullable = false,columnDefinition = "INT(11)")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserModel userId;
 
     // Constructor sin el campo ID
