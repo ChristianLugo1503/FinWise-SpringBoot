@@ -1,5 +1,6 @@
 package com.finanzas_personales.FinanzasPersonales.Controllers;
 
+import com.finanzas_personales.FinanzasPersonales.ENUMS.typeENUM;
 import com.finanzas_personales.FinanzasPersonales.Models.CategoriesModel;
 import com.finanzas_personales.FinanzasPersonales.Models.UserModel;
 import com.finanzas_personales.FinanzasPersonales.Repositories.ICategoriesRepository;
@@ -7,6 +8,7 @@ import com.finanzas_personales.FinanzasPersonales.Repositories.IUserRepository;
 import com.finanzas_personales.FinanzasPersonales.Services.JwtUtilService;
 import com.finanzas_personales.FinanzasPersonales.dto.AuthRequestDto;
 import com.finanzas_personales.FinanzasPersonales.dto.AuthResponseDto;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +93,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
+    @Transactional // Garantiza que todas las operaciones sean atómicas
     public ResponseEntity<?> register(@RequestBody UserModel userModel) {
         try {
             // Verificar si el correo existe en la base de datos
@@ -104,22 +111,48 @@ public class AuthController {
 
             // Guardar el usuario
             UserModel savedUser = userRepository.save(userModel);
+            if (savedUser == null || savedUser.getId() == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                        "error", "User not saved",
+                        "message", "Failed to save the user."
+                ));
+            }
 
-            //Crear categorias por defecto para el nuevo usuario
-            /*
-            List<CategoriesModel> defaultCategories = List.of(
-                    new CategoriesModel("Ocio", "Gastos", "", savedUser),
-                    new CategoriesModel("Educación", "Gastos", "", savedUser),
-                    new CategoriesModel("Café", "Gastos", "", savedUser),
-                    new CategoriesModel("Otros", "Gastos", "", savedUser),
-                    new CategoriesModel("Salario", "Ingresos", "", savedUser),
-                    new CategoriesModel("Bonos", "Ingresos", "", savedUser),
-                    new CategoriesModel("Regalo", "Ingresos", "", savedUser),
-                    new CategoriesModel("Otros", "Ingresos", "", savedUser)
-            );
+            // Crear las categorías predeterminadas para el nuevo usuario
+            List<CategoriesModel> defaultCategories = new ArrayList<>();
+            try {
+                defaultCategories.add(new CategoriesModel("Alimentación", typeENUM.Gasto, loadImage("gastos/alimentacion.png"), savedUser, "#6DAFD4"));
+                defaultCategories.add(new CategoriesModel("Casa", typeENUM.Gasto, loadImage("gastos/casa.png"), savedUser, "#3274C7"));
+                defaultCategories.add(new CategoriesModel("Educación", typeENUM.Gasto, loadImage("gastos/educacion.png"), savedUser, "#D14E81"));
+                defaultCategories.add(new CategoriesModel("Familia", typeENUM.Gasto, loadImage("gastos/familia.png"), savedUser, "#6B2DBA"));
+                defaultCategories.add(new CategoriesModel("Otros", typeENUM.Gasto, loadImage("gastos/otros.png"), savedUser, "#2C9C23"));
+                defaultCategories.add(new CategoriesModel("Regalos", typeENUM.Gasto, loadImage("gastos/regalos.png"), savedUser, "#92AC8B"));
+                defaultCategories.add(new CategoriesModel("Salud", typeENUM.Gasto, loadImage("gastos/salud.png"), savedUser, "#E33939"));
+                defaultCategories.add(new CategoriesModel("Transporte", typeENUM.Gasto, loadImage("gastos/transporte.png"), savedUser, "#30C2B0"));
 
+                defaultCategories.add(new CategoriesModel("Interés", typeENUM.Ingreso, loadImage("ingresos/interes.png"), savedUser, "#63A448"));
+                defaultCategories.add(new CategoriesModel("Regalo", typeENUM.Ingreso, loadImage("ingresos/regalo.png"), savedUser, "#CD4C83"));
+                defaultCategories.add(new CategoriesModel("Salario", typeENUM.Ingreso, loadImage("ingresos/salario.png"), savedUser, "#3675C7"));
+                defaultCategories.add(new CategoriesModel("Otros", typeENUM.Ingreso, loadImage("gastos/otros.png"), savedUser, "#2C9C23"));
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                        "error", "Image loading error",
+                        "message", "Error loading images: " + e.getMessage()
+                ));
+            }
+
+            // Guardar las categorías
             categoriesRepository.saveAll(defaultCategories);
-            */
+
+            // Validar que las categorías se hayan guardado
+            List<CategoriesModel> savedCategories = categoriesRepository.findByUserId(savedUser);
+            if (savedCategories.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                        "error", "Categories not saved",
+                        "message", "Failed to create default categories."
+                ));
+            }
+
             // Generar JWT
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(savedUser.getEmail());
             String jwt = this.jwtUtilService.generateToken(userDetails, savedUser.getRole());
@@ -138,6 +171,7 @@ public class AuthController {
             ));
         }
     }
+
 
 
     @PostMapping("/refresh")
@@ -170,6 +204,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error refresh token:::" + e.getMessage());
         }
     }
+
+
+    public byte[] loadImage(String imagePath) throws IOException {
+        // Cargar la imagen desde la carpeta de recursos
+        return Files.readAllBytes(Paths.get("src/main/java/com/finanzas_personales/FinanzasPersonales/Images/" + imagePath));
+    }
+
 
 
 }

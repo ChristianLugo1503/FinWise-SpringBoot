@@ -1,5 +1,6 @@
 package com.finanzas_personales.FinanzasPersonales.Controllers;
 
+import com.finanzas_personales.FinanzasPersonales.ENUMS.typeENUM;
 import com.finanzas_personales.FinanzasPersonales.Models.CategoriesModel;
 import com.finanzas_personales.FinanzasPersonales.Models.UserModel;
 import com.finanzas_personales.FinanzasPersonales.Services.CategoriesService;
@@ -36,46 +37,27 @@ public class CategoriesController {
             @RequestParam("name") String name,
             @RequestParam("type") String type,
             @RequestParam("userId") UserModel user,
-            @RequestParam("image") MultipartFile image) {
+            @RequestParam("image") MultipartFile image,
+            @RequestParam("color") String color) {
         try {
+            // Convertir la cadena 'type' a un valor del enum typeENUM
+            typeENUM categoryType = typeENUM.valueOf(type); // Esto lanza una IllegalArgumentException si el tipo no es válido
+
             // Convertir la imagen en bytes
             byte[] imageBytes = image.getBytes();
 
             // Crear la categoría
-            CategoriesModel category = new CategoriesModel(name, type, imageBytes, user);
+            CategoriesModel category = new CategoriesModel(name, categoryType, imageBytes, user, color);
             CategoriesModel savedCategory = categoriesService.saveCategories(category);
 
             return ResponseEntity.ok(savedCategory);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body("Tipo de categoría inválido: " + type);
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Error al procesar la imagen");
         }
     }
 
-    /*
-    // Obtener todas las categorias de un usuario en espesífico
-    @GetMapping("/user/{userID}")
-    public ResponseEntity<List<CategoriesModel>> getCategoriesByUserId(@PathVariable String userID) {
-        try {
-            List<CategoriesModel> categories = categoriesService.getCategoriesByUserId(userID);
-
-            // Convertir la imagen de cada categoría a Base64 si no es nula
-            for (CategoriesModel category : categories) {
-                if (category.getImage() != null) {
-                    String base64Image = Base64.getEncoder().encodeToString(category.getImage());
-                    category.setImage(base64Image.getBytes()); // Establece la imagen como una cadena Base64
-                }
-            }
-
-            if (categories.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(categories);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }*/
 
     //Método para obtener todas las categorias de un usuario en específico
     @GetMapping("/user/{userID}")
@@ -94,8 +76,6 @@ public class CategoriesController {
             return ResponseEntity.status(500).body(null);
         }
     }
-
-
 
     @DeleteMapping("/delete/{id}")
     public String deleteCategories(@PathVariable Long id){

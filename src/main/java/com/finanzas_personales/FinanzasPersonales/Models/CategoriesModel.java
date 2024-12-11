@@ -1,5 +1,6 @@
 package com.finanzas_personales.FinanzasPersonales.Models;
 
+import com.finanzas_personales.FinanzasPersonales.ENUMS.typeENUM;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class CategoriesModel {
     private String name;
 
     @Column(nullable = false)
-    private String type;
+    private typeENUM type;
 
     // Almacena el contenido de la imagen como BLOB
     @Lob
@@ -29,11 +30,15 @@ public class CategoriesModel {
     @JoinColumn(name = "user_id", nullable = false)
     private UserModel userId;
 
+    @Column(nullable = false)
+    private String color;
+
     // Constructor sin el campo ID
-    public CategoriesModel(String name, String type, byte[] image, UserModel user) {
+    public CategoriesModel(String name, typeENUM type, byte[] image, UserModel user, String color) {
         this.name = name;
         this.type = type;
         this.image = image;
         this.userId = user;
+        this.color = color;
     }
 };
