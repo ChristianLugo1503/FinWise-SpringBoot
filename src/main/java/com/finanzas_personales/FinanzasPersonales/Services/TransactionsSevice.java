@@ -10,6 +10,7 @@ import com.finanzas_personales.FinanzasPersonales.dto.TransactionsDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.events.Event;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -44,7 +45,10 @@ public class TransactionsSevice {
         return transactionsRepository.save(transactionsModel);
     }
 
-
+    //Eliminar transaccion por medio del id
+    public void deleteTransactionById(Long id){
+        transactionsRepository.deleteById(id);
+    }
 
     //Optener todas las transacciones por medio del id del usuario
     public List<TransactionsModel> getTransactionsByUserID(Long userId){
@@ -62,4 +66,20 @@ public class TransactionsSevice {
         }
     }
 
+    // Actualizar una transacción existente
+    public TransactionsModel updateTransaction(Long id, TransactionsDto dto) {
+        TransactionsModel existingTransaction = transactionsRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Transacción no encontrada")
+        );
+
+        existingTransaction.setCategoryID(categoriesRepository.findById(dto.getCategoryID()).orElseThrow(
+                () -> new EntityNotFoundException("Categoría no encontrada")
+        ));
+        existingTransaction.setAmount(dto.getAmount());
+        existingTransaction.setDate(dto.getDate());
+        existingTransaction.setDescription(dto.getDescription());
+        existingTransaction.setType(dto.getType());
+
+        return transactionsRepository.save(existingTransaction);
+    }
 }
