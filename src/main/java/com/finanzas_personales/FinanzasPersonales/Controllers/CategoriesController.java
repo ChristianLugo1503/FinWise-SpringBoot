@@ -83,5 +83,21 @@ public class CategoriesController {
         return "Categoría eliminada exitosamente :)";
     }
 
-    
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestParam("name") String name, @RequestParam("type") String type, @RequestParam("color") String color) {
+        try {
+            CategoriesModel category = categoriesService.getCategoryById(id).orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+            category.setName(name);
+            category.setType(typeENUM.valueOf(type)); // Si el tipo es un enum
+            category.setColor(color);
+
+            CategoriesModel updatedCategory = categoriesService.saveCategories(category);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body("Error al actualizar la categoría: " + e.getMessage());
+        }
+    }
+
+
+
 }
