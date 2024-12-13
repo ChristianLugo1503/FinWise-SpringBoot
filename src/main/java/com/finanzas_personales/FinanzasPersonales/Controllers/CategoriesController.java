@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/v1/categories")
@@ -78,10 +79,16 @@ public class CategoriesController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteCategories(@PathVariable Long id){
-        categoriesService.deleteCategories(id);
-        return "Categoría eliminada exitosamente :)";
+    public ResponseEntity<Map<String, Object>> deleteCategories(@PathVariable Long id) {
+        Map<String, Object> result = categoriesService.deleteCategories(id);
+        if ((boolean) result.get("success")) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
+
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestParam("name") String name, @RequestParam("type") String type, @RequestParam("color") String color) {
@@ -94,7 +101,7 @@ public class CategoriesController {
             CategoriesModel updatedCategory = categoriesService.saveCategories(category);
             return ResponseEntity.ok(updatedCategory);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("Error al actualizar la categoría: " + e.getMessage());
+            return ResponseEntity.status(200).body("Error al actualizar la categoría: " + e.getMessage());
         }
     }
 

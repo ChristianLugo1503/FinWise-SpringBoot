@@ -3,11 +3,14 @@ package com.finanzas_personales.FinanzasPersonales.Services;
 import com.finanzas_personales.FinanzasPersonales.Models.CategoriesModel;
 import com.finanzas_personales.FinanzasPersonales.Models.UserModel;
 import com.finanzas_personales.FinanzasPersonales.Repositories.ICategoriesRepository;
+import com.finanzas_personales.FinanzasPersonales.Repositories.ITransactionsRepository;
 import com.finanzas_personales.FinanzasPersonales.Repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -17,6 +20,9 @@ public class CategoriesService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private ITransactionsRepository transactionRepository;
 
     //Metodo para obtener una lista de categorias
     public List<CategoriesModel> getAllCategories(){
@@ -51,7 +57,34 @@ public class CategoriesService {
         return categoriesRepository.save(categoria);
     }
 
-    public void deleteCategories(Long id) {
-        categoriesRepository.deleteById(id);
+    public Map<String, Object> deleteCategories(Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Recuperar la categoría por ID
+            CategoriesModel category = categoriesRepository.findById(id).orElseThrow(() ->
+                    new IllegalArgumentException("La categoría con el ID " + id + " no existe."));
+
+            // Verificar si la categoría está siendo utilizada
+            if (transactionRepository.existsBycategoryID(category)) {
+                response.put("success", false);
+                response.put("message", "No se puede eliminar la categoría porque está siendo utilizada en transacciones.");
+                return response;
+            }
+
+            // Eliminar la categoría
+            categoriesRepository.deleteById(id);
+            response.put("success", true);
+            response.put("message", "Categoría eliminada exitosamente :)");
+            return response;
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Ocurrió un error inesperado: " + e.getMessage());
+            return response;
+        }
     }
+
+
+
 }
