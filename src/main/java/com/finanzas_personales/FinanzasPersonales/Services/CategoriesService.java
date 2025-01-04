@@ -31,7 +31,9 @@ public class CategoriesService {
 
     //Metodo para obtener una categoria mediante el id
     public Optional<CategoriesModel> getCategoryById(Long id) {
-        return categoriesRepository.findById(id);
+        Optional<CategoriesModel> category = categoriesRepository.findById(id);
+        System.out.println("Category retrieved: " + category); // Debug
+        return category;
     }
 
 

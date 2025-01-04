@@ -59,6 +59,42 @@ public class CategoriesController {
         }
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateCategory(
+            @PathVariable Long id,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "color", required = false) String color,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
+        try {
+            // Obtener la categoría existente
+            CategoriesModel category = categoriesService.getCategoryById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada " + id));
+
+            // Actualizar solo los campos proporcionados
+            if (name != null) {
+                category.setName(name);
+            }
+            if (type != null) {
+                category.setType(typeENUM.valueOf(type)); // Si el tipo es un enum
+            }
+            if (color != null) {
+                category.setColor(color);
+            }
+            if (image != null && !image.isEmpty()) {
+                // Convertir la imagen en bytes solo si se proporciona
+                category.setImage(image.getBytes());
+            }
+
+            // Guardar los cambios
+            CategoriesModel updatedCategory = categoriesService.saveCategories(category);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("Error al actualizar la categoría: " + e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Error al procesar la imagen");
+        }
+    }
 
     //Método para obtener todas las categorias de un usuario en específico
     @GetMapping("/user/{userID}")
@@ -87,24 +123,4 @@ public class CategoriesController {
             return ResponseEntity.badRequest().body(result);
         }
     }
-
-
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestParam("name") String name, @RequestParam("type") String type, @RequestParam("color") String color) {
-        try {
-            CategoriesModel category = categoriesService.getCategoryById(id).orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
-            category.setName(name);
-            category.setType(typeENUM.valueOf(type)); // Si el tipo es un enum
-            category.setColor(color);
-
-            CategoriesModel updatedCategory = categoriesService.saveCategories(category);
-            return ResponseEntity.ok(updatedCategory);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(200).body("Error al actualizar la categoría: " + e.getMessage());
-        }
-    }
-
-
-
 }
