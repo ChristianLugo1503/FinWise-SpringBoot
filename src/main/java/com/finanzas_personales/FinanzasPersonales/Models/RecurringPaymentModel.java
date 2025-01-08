@@ -1,6 +1,7 @@
 package com.finanzas_personales.FinanzasPersonales.Models;
 
 import com.finanzas_personales.FinanzasPersonales.ENUMS.frequencyENUM;
+import com.finanzas_personales.FinanzasPersonales.ENUMS.typeENUM;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,9 +42,16 @@ public class RecurringPaymentModel {
     @Column(nullable = false)
     private Boolean status;
 
+    @Column(nullable = false)
+    private typeENUM type;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoriesModel categoryID;
 }

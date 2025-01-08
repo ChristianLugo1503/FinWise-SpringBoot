@@ -102,7 +102,6 @@ public class CategoriesController {
         try {
             List<CategoriesModel> categories = categoriesService.getCategoriesByUserId(userID);
 
-            // No conviertas la imagen a Base64, déjala como un byte[] que se puede convertir en Blob en Angular
             if (categories.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
