@@ -26,6 +26,8 @@ public class NotificationsModel {
     @Column(nullable = false)
     private notificationTypeENUM type;
 
+    @Lob
+    @Column(name="message", length=512)
     private String message;
 
     @Column(name = "creation_date", nullable = false)

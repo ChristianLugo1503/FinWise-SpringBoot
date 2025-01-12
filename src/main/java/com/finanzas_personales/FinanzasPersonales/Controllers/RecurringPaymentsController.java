@@ -33,4 +33,20 @@ public class RecurringPaymentsController {
     public  RecurringPaymentModel createRecurringPayment(@RequestBody RecurringPaymentDto recurringPaymentDto){
         return recurringPaymentService.createRecurringPayment(recurringPaymentDto);
     }
+
+    @DeleteMapping("delete/{id}")
+    public void deleteRecurringPaymentByID(@PathVariable Long id){
+        recurringPaymentService.deleteRecurringPaymentByID(id);
+    }
+
+    @PutMapping("update/{id}")
+    public void updateRecurringPayment(@PathVariable Long id, @RequestBody RecurringPaymentDto recurringPaymentDto) {
+        recurringPaymentService.updateRecurringPayment(id, recurringPaymentDto);
+    }
+
+    @PutMapping("status/{id}")
+    public void updateStatus(@PathVariable Long id, @RequestBody Boolean newStatus) {
+        recurringPaymentService.updateRecurringPaymentStatus(id, newStatus);
+    }
+
 }

@@ -57,4 +57,48 @@ public class RecurringPaymentService {
         return recurringPaymentsRepository.save(recurringPayment);
     }
 
+    //Eliminar pago recurrente
+    public void deleteRecurringPaymentByID(Long id){
+        recurringPaymentsRepository.deleteById(id);
+    }
+
+    public RecurringPaymentModel updateRecurringPayment(Long id, RecurringPaymentDto dto){
+        // Verificar si el pago recurrente existe
+        RecurringPaymentModel recurringPayment = recurringPaymentsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pago recurrente no encontrado"));
+        // Mapeo manual de DTO a modelo
+
+        recurringPayment.setUser(userRepository.findById(dto.getUser()).orElseThrow(
+                () -> new EntityNotFoundException("Usuario no encontrado")
+        ));
+        recurringPayment.setName(dto.getName());
+        recurringPayment.setFrequency(dto.getFrequency());
+        recurringPayment.setReminderTime(dto.getReminderTime());
+        recurringPayment.setComment(dto.getComment());
+        recurringPayment.setAmount(dto.getAmount());
+        recurringPayment.setStatus(dto.getStatus());
+        recurringPayment.setType(dto.getType());
+        recurringPayment.setCreatedAt(dto.getCreatedAt());
+        recurringPayment.setUpdatedAt(dto.getUpdatedAt());
+        recurringPayment.setCategoryID(categoriesRepository.findById(dto.getCategoryID()).orElseThrow(
+                () -> new EntityNotFoundException("Categoría no encontrada")
+        ));
+
+        // Guardar y devolver el modelo persistido
+        return recurringPaymentsRepository.save(recurringPayment);
+    }
+
+    // Cambiar status de un pago recurrente por ID
+    public void updateRecurringPaymentStatus(Long id, Boolean newStatus) {
+        // Verificar si el pago recurrente existe
+        RecurringPaymentModel recurringPayment = recurringPaymentsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pago recurrente no encontrado"));
+
+        // Actualizar el estado
+        recurringPayment.setStatus(newStatus);
+
+        // Guardar los cambios en la base de datos
+        recurringPaymentsRepository.save(recurringPayment);
+    }
+
 }

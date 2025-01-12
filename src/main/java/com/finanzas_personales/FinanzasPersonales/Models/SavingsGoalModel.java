@@ -47,4 +47,12 @@ public class SavingsGoalModel {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private Boolean status;
+
+    // Almacena el contenido de la imagen como BLOB
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
 }
