@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -92,6 +93,19 @@ public class SavingsGoalsService {
 
         // Actualizar el estado
         savingGoal.setStatus(newStatus);
+
+        // Guardar los cambios en la base de datos
+        savingsGoalsRepository.save(savingGoal);
+    }
+
+    //Actualizar el dinero ahorrado
+    public void updateSavedAmount(Long id, BigDecimal newAmount) {
+        // Verificar si la meta de ahorro existe
+        SavingsGoalModel savingGoal = savingsGoalsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Meta de ahorro no encontrada"));
+
+        // Actualizar el estado
+        savingGoal.setSavedAmount(newAmount);
 
         // Guardar los cambios en la base de datos
         savingsGoalsRepository.save(savingGoal);

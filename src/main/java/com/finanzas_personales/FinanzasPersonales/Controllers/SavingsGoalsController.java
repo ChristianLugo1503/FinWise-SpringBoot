@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -45,5 +46,10 @@ public class SavingsGoalsController {
     @PutMapping("/status/{id}")
     public void updateSavingsGoalStatus(@PathVariable Long id, @RequestBody Boolean newStatus) {
         savingsGoalService.updateSavingGoalStatus(id, newStatus);
+    }
+
+    @PutMapping("/saved/{id}")
+    public void updateSavedAmount(@PathVariable Long id, @RequestBody BigDecimal newAmount) {
+        savingsGoalService.updateSavedAmount(id, newAmount);
     }
 }

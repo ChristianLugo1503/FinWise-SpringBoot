@@ -27,8 +27,8 @@ public class GroupsModel {
     @Column(name = "goal_amount", nullable = false)
     private BigDecimal goalAmount;
 
-    @Column
-    private LocalDate deadline;
+    @Column(name = "saved_amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal savedAmount;
 
     @ManyToOne //muchos a uno
     @JoinColumn(name = "created_by", nullable = true)

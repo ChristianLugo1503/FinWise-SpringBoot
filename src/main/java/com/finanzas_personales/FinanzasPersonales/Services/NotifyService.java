@@ -127,11 +127,11 @@ public class NotifyService {
             for (SavingsGoalModel saving : allSaving) {
                 // Validación básica del objeto
                 if (saving == null || saving.getFrequency() == null || saving.getGoalTime() == null) {
-                    System.out.println("Pago recurrente inválido encontrado. Saltando...");
+                    System.out.println("Ahorro inválido encontrado. Saltando...");
                     continue;
                 }
 
-                System.out.println("Procesando pago recurrente: " + saving.getName() + ", Frecuencia: " + saving.getFrequency());
+                System.out.println("Procesando Ahorro: " + saving.getName() + ", Frecuencia: " + saving.getFrequency());
 
                 // Lógica para determinar si se debe notificar según la frecuencia
                 boolean shouldNotify = false;
@@ -169,7 +169,7 @@ public class NotifyService {
                     NotificationsModel notification = new NotificationsModel();
                     notification.setUser(saving.getUser());
                     notification.setMessage(randomMessage);
-                    notification.setType(notificationTypeENUM.pago_recurrente);
+                    notification.setType(notificationTypeENUM.ahorro);
                     notification.setReadStatus(false);
                     notification.setCreationDate(now);
                     notification.setRequiresResponse(false);

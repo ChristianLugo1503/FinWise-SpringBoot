@@ -30,9 +30,6 @@ public class GroupContributionsModel {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false)
-    private LocalDate date;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private statusENUM status;
@@ -41,8 +38,4 @@ public class GroupContributionsModel {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
 }

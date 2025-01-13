@@ -20,9 +20,9 @@ public class GroupMembersModel {
     @JoinColumn(name = "group_id", nullable = false)
     private GroupsModel groupId;
 
-    @ManyToOne //un usuario puede ser miembro de muchos grupos
+    @ManyToOne // Un usuario puede ser miembro de muchos grupos
     @JoinColumn(name = "user_id", nullable = false)
-    private UserModel UserId;
+    private UserModel userId;
 
     @Column(name = "joined_at", updatable = false)
     @org.hibernate.annotations.CreationTimestamp

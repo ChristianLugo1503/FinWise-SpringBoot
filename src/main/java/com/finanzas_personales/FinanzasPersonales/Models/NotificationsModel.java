@@ -41,8 +41,10 @@ public class NotificationsModel {
 
     @Enumerated(EnumType.STRING)
     private statusENUM responseStatus;
-
+/*
     @ManyToOne
     @JoinColumn(name = "contribution_id")
     private GroupContributionsModel contribution;
+
+ */
 }

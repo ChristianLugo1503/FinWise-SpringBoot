@@ -3,6 +3,8 @@ package com.finanzas_personales.FinanzasPersonales.Controllers;
 import com.finanzas_personales.FinanzasPersonales.Models.NotificationsModel;
 import com.finanzas_personales.FinanzasPersonales.Models.SavingsGoalModel;
 import com.finanzas_personales.FinanzasPersonales.Services.NotificationService;
+import com.finanzas_personales.FinanzasPersonales.dto.NotificationDto;
+import com.finanzas_personales.FinanzasPersonales.dto.SavingGoalDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,11 @@ import java.util.List;
 public class NotificationsController {
     @Autowired
     private NotificationService notificationService;
+
+    @PostMapping("/create")
+    public NotificationsModel createNotification(@RequestBody NotificationDto notificationDto) {
+        return notificationService.createNotification(notificationDto);
+    }
 
     @GetMapping("/user/{userID}")
     public ResponseEntity<?> getNotificationsByUserId(@PathVariable Long userID) {
