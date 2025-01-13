@@ -21,4 +21,9 @@ public class GroupContributionsController {
     public GroupContributionsModel createContribution(@RequestBody GroupContributionsDto groupContributionsDto) {
         return groupContributionService.createContribution(groupContributionsDto);
     }
+
+    @GetMapping("/group/{groupId}")
+    public List<GroupContributionsModel> getContributionsByGroup(@PathVariable Long groupId) {
+        return groupContributionService.getContributionsByGroupId(groupId);
+    }
 }

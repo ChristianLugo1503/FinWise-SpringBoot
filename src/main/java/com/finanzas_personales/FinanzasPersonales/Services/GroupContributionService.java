@@ -11,6 +11,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GroupContributionService {
     @Autowired
@@ -42,4 +44,9 @@ public class GroupContributionService {
         return groupContributionsRepository.save(contribution);
     }
 
+
+    //obtener contribuciones por el grupo id
+    public List<GroupContributionsModel> getContributionsByGroupId(Long groupId) {
+        return groupContributionsRepository.findByGroup_Id(groupId);
+    }
 }
