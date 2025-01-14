@@ -34,6 +34,9 @@ public class UserModel {
     @Column
     private String role = "admin";
 
-
+    // Almacena el contenido de la imagen como BLOB
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
 }
 

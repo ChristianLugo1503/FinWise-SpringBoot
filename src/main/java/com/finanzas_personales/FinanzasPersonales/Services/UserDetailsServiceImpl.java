@@ -1,12 +1,17 @@
 package com.finanzas_personales.FinanzasPersonales.Services;
 
+import com.finanzas_personales.FinanzasPersonales.Models.SavingsGoalModel;
 import com.finanzas_personales.FinanzasPersonales.Models.UserModel;
 import com.finanzas_personales.FinanzasPersonales.Repositories.IUserRepository;
+import com.finanzas_personales.FinanzasPersonales.dto.SavingGoalDto;
+import com.finanzas_personales.FinanzasPersonales.dto.UserDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +24,8 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private IUserRepository iUserRepository;
+
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -46,5 +53,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserModel getUserByEmail(String email){
         return iUserRepository.findByEmail(email);
     }
+
+
+
 
 }
